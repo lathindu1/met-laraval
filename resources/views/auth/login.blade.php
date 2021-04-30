@@ -1,4 +1,4 @@
-@extends('Layouts.guest')
+@extends('layouts.guest')
 @section('title', 'Login | FIN21')
 @section('content')
 <div class="container" style="padding-top:40px;">
