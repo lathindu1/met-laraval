@@ -13,9 +13,15 @@ class MetamaskCard extends Component
 {
     public function render()
     {
-        return view('livewire.metamask-card');
+        return view('components.metamask-card');
     }
-
+    /**
+     * Validate User
+     *
+     * @param  mixed $address
+     *
+     * @return void
+     */
     public function validateUser($address){
         $user = UserFacade::getByAddress($address[0]);
         if($user){
@@ -25,10 +31,23 @@ class MetamaskCard extends Component
         }
 
     }
+        /**
+     * Login User
+     *
+     * @param  User $user
+     *
+     * @return void
+     */
      public function loginUser($user){
         $this->signMetaMask($user);
     }
-
+    /**
+     * Signup User
+     *
+     * @param  String $address
+     *
+     * @return void
+     */
     public function signupUser($address){
         $user = UserFacade::create(
             [
@@ -38,7 +57,13 @@ class MetamaskCard extends Component
         );
         $this->signMetaMask($user);
     }
-
+    /**
+     * Sign With MetaMask
+     *
+     * @param  User $user
+     *
+     * @return void
+     */
     public function signMetaMask($user){
          $this->dispatchBrowserEvent(
              'newNonce',
@@ -48,16 +73,35 @@ class MetamaskCard extends Component
                 ]
             );
     }
+    /**
+     * Generate Message
+     *
+     * @param  String $nonce
+     *
+     * @return String
+     */
     public function genMessage($nonce){
         return "Hi there, Sign this message to prove you have access to this wallet and we’ll log you in."
         ." This won’t cost you any Ether. To stop hackers using your wallet, here’s a unique message ID they can’t guess:".$nonce;
     }
-
-  // Check if the message was signed with the same private key to which the public address belongs
-  function pubKeyToAddress($pubkey) {
-    return "0x" . substr(Keccak::hash(substr(hex2bin($pubkey->encode("hex")), 1), 256), 24);
-  }
-
+    /**
+     * PubKey To Address
+     *
+     * @param  Mixed $pubkey
+     *
+     * @return String
+     */
+    function pubKeyToAddress($pubkey) {
+        return "0x" . substr(Keccak::hash(substr(hex2bin($pubkey->encode("hex")), 1), 256), 24);
+    }
+    /**
+     * Validate Sign
+     *
+     * @param  String $signature
+     * @param  String $address
+     *
+     * @return void
+     */
     public function validateSign($signature, $address){
 
         $user = UserFacade::getByAddress($address);
@@ -94,7 +138,12 @@ class MetamaskCard extends Component
             );
         }
     }
-
+    /**
+     * User Logged
+     *
+     * @param  mixed $user
+     * @return void
+     */
     public function userLogged($user){
         UserFacade::update($user,["nonce" => uniqid('sip',true)]);
            Auth::login($user, true);
